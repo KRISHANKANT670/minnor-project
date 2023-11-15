@@ -1,11 +1,34 @@
 import speech_recognition as sr
 import pyttsx3
+from datetime import datetime
+import pytz
+
+# Set the time zone to Indian Standard Time (IST)
+indian_timezone = pytz.timezone('Asia/Kolkata')
+
+# Get the current UTC time
+utc_now = datetime.utcnow()
+
+# Convert the UTC time to Indian Standard Time
+indian_datetime = utc_now.replace(tzinfo=pytz.utc).astimezone(indian_timezone)
 
 # Initialize the speech recognition engine
 recognizer = sr.Recognizer()
 
 # Initialize the text-to-speech engine
 engine = pyttsx3.init()
+
+# Format the date and time as a string
+formatted_date = indian_datetime.strftime("%d-%B-%Y")
+formatted_datetime = indian_datetime.strftime("%H:%M:")
+
+# Get the current day
+current_day = indian_datetime.strftime("%A")
+
+# Print the results
+# print("Current Date :", formatted_date)
+# print("Current Time :", formatted_datetime)
+# print("Current Day:", current_day)
 
 # Function to speak the given text
 def speak(text):
@@ -39,8 +62,14 @@ while True:
         # Perform actions based on recognized speech
         if "hello" in query.lower():
             speak(" Hello! How can I assist you?")
+        elif "date" in query.lower():
+            speak(formatted_date)
+        elif "day" in query.lower():
+            speak(current_day)
+        elif "time" in query.lower():
+            speak(formatted_datetime)
         elif "what is your name" in query.lower() or "name" in query.lower() or "your name" in query.lower() or "is your name" in query.lower():
-            speak(" I am your Krish.")
+            speak("I am your Krish.")
         elif "are you human" in query.lower() or "human" in query.lower() or "you human" in query.lower():
             speak(" No No, I am not a human. I am krish, a computer-based AI language model created by Krishankant Yadav and there team. I don't have thoughts, emotions, or a physical presence. I'm here to provide information and answer your questions to the best of my abilities based on my programming and the data I was trained on.")
         elif "how can you help me" in query.lower() or "help" in query.lower() or "help me" in query.lower():
@@ -54,6 +83,8 @@ while True:
             break
         else:
             speak("I didn't understand that. Can you please repeat?")
+        
+        
 
 # Release resources
 recognizer.close()
