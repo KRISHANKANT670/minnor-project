@@ -2,15 +2,14 @@ import speech_recognition as sr
 import pyttsx3
 from datetime import datetime
 import pytz
+import datetime
+import wikipedia
 
 # Set the time zone to Indian Standard Time (IST)
 indian_timezone = pytz.timezone('Asia/Kolkata')
 
-# Get the current UTC time
-utc_now = datetime.utcnow()
-
-# Convert the UTC time to Indian Standard Time
-indian_datetime = utc_now.replace(tzinfo=pytz.utc).astimezone(indian_timezone)
+# Get the current time
+indian_datetime = datetime.datetime.now(indian_timezone)
 
 # Initialize the speech recognition engine
 recognizer = sr.Recognizer()
@@ -63,11 +62,11 @@ while True:
         if "hello" in query.lower():
             speak(" Hello! How can I assist you?")
         elif "date" in query.lower():
-            speak(formatted_date)
+            speak(indian_datetime.strftime("%d-%B-%Y"))
         elif "day" in query.lower():
-            speak(current_day)
+            speak(indian_datetime.strftime("%A"))
         elif "time" in query.lower():
-            speak(formatted_datetime)
+            speak(indian_datetime.strftime("%H:%M:%S"))
         elif "what is your name" in query.lower() or "name" in query.lower() or "your name" in query.lower() or "is your name" in query.lower():
             speak("I am your Krish.")
         elif "are you human" in query.lower() or "human" in query.lower() or "you human" in query.lower():
@@ -82,9 +81,16 @@ while True:
             speak(" Goodbye! ")
             break
         else:
-            speak("I didn't understand that. Can you please repeat?")
-        
-        
+            try:
+                # Search Wikipedia for the query
+                result = wikipedia.summary(query, sentences=2)
+                speak("According to Wikipedia, " + result)
+            except wikipedia.exceptions.DisambiguationError as e:
+                # If there are multiple search results, inform the user
+                speak("There are multiple results for this query. Please specify your search.")
+            except wikipedia.exceptions.PageError as e:
+                # If no page matches the query, inform the user
+                speak("I'm sorry, I couldn't find relevant information on that topic.")
 
 # Release resources
 recognizer.close()
